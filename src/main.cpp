@@ -106,14 +106,6 @@ void drawStatusHeader() {
   display.drawLine(0, 9, 127, 9, SSD1306_WHITE);
 }
 
-// เลขหน้ามุมล่างขวา เช่น "1/2"
-// void drawPageIndicator() {
-//   display.setCursor(112, 56);
-//   display.print(displayPage + 1);
-//   display.print("/");
-//   display.print(DISPLAY_PAGE_COUNT);
-// }
-
 // หน้า 1: ความชื้น + Setpoint แต่ละจุด + Auto mode + Relay
 void drawPageMoisture() {
   display.setCursor(0, 14);
@@ -170,7 +162,6 @@ void updateDisplay() {
     case 1: drawPageSoil();     break;
   }
 
-  // drawPageIndicator();
   display.display();
 }
 
