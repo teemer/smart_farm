@@ -224,6 +224,18 @@ BLYNK_WRITE(V5) { // offset
   }
 }
 
+// ปุ่ม Refresh บนแอป (Virtual Pin V16, Push Button) กดแล้วส่งค่าล่าสุดขึ้น Blynk ทันที ไม่ต้องรอ 15 นาที
+BLYNK_WRITE(V16) {
+  if (param.asInt() == 1) {
+    sendAnalogValue();
+  }
+}
+
+// เรียกอัตโนมัติทันทีที่ ESP32 เชื่อมต่อกับ Blynk server สำเร็จ (ตอนบูต หรือหลุด WiFi แล้วต่อกลับ)
+BLYNK_CONNECTED() {
+  sendAnalogValue();
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -267,9 +279,11 @@ void setup() {
   }
 
   Blynk.begin(auth, ssid, pass);
-  // ตั้งเวลาให้อ่านค่าทุกๆ 5 วินาที
-  timer.setInterval(5000L, sendAnalogValue);
+  // อ่านค่าเซนเซอร์ + คุม auto ทุก 5 วิ (ต้องไวเพื่อความแม่นยำของการรดน้ำอัตโนมัติ)
   timer.setInterval(5000L, get_lola_sensor);
+  // ส่งค่าขึ้นแอป Blynk ทุก 15 นาที (ประหยัด data ของ Blynk)
+  // ค่าแรกจะถูกส่งทันทีผ่าน BLYNK_CONNECTED() ด้านบน ไม่ต้องรอ 15 นาทีแรก
+  timer.setInterval(15UL * 60UL * 1000UL, sendAnalogValue);
   timer.setInterval(1000L, updateDisplay);
   timer.setInterval(4000L, cycleDisplayPage); // สลับหน้าจอทุก 4 วิ
 }
