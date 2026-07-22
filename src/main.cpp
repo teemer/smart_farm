@@ -62,11 +62,8 @@ int   potassium   = 0;
 byte responseBuffer[19];
 int byteCount = 0;
 
-// ฟังก์ชันสำหรับอ่านค่าอนาล็อกแบบหาค่าเฉลี่ย
+// ส่งค่าล่าสุด (ที่คำนวณไว้แล้วใน loop() ทุกรอบ) ขึ้น Blynk เท่านั้น ไม่คำนวณอะไรในนี้
 void sendAnalogValue() {
-  moisture_1_sensor = map(emaValue, 3050, 2230, 0, 100);
-  // Serial.print("Filtered Analog Value (Pin 35): ");
-  Serial.println(moisture_1_sensor);
   Blynk.virtualWrite(V1, moisture_1_sensor); // ส่งค่าเฉลี่ยที่นิ่งแล้วไป Blynk
   Blynk.virtualWrite(V6, moisture_2_sensor);
   Blynk.virtualWrite(V7, temperature);
@@ -298,6 +295,7 @@ void loop() {
   } else {
     emaValue = (sensorValue * alpha) + (emaValue * (1.0 - alpha));
   }
+  moisture_1_sensor = map(emaValue, 3050, 2230, 0, 100); // อัปเดตทุกลูป ไม่รอรอบส่ง Blynk
 
   if (auto_status_1){
     relay1_state = (moisture_1_sensor <= offset_moisture_1);
